@@ -3,7 +3,6 @@ package httpconn
 import (
 	"errors"
 	"io"
-	"net"
 	"net/http"
 	"sync"
 
@@ -45,7 +44,7 @@ func (s *Server) newReq(ch chan pipeReq) (io.ReadWriteCloser, error) {
 		s.mx.Unlock()
 		return nil, errors.New("failed to aquire read channel")
 	}
-	return pipe{r, w}, nil
+	return &pipe{r, w}, nil
 }
 
 func setHeaders(h http.Header, id string) {
@@ -86,14 +85,14 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			close(ch)
 			return
 		}
-		ch <- bufConn{c, buf}
+		ch <- &bufConn{c, buf}
 
 		return
 	default:
 		http.Error(w, "only GET and POST are allowed", 405)
 		return
 	}
-	if p == nil {
+	if p.res == nil {
 		http.NotFound(w, req)
 		return
 	}

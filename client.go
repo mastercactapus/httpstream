@@ -3,7 +3,6 @@ package httpconn
 import (
 	"fmt"
 	"io"
-	"net"
 	"net/http"
 	"net/url"
 )
@@ -45,7 +44,7 @@ func (c *Client) Open() (io.ReadWriteCloser, error) {
 	}
 	r, w := io.Pipe()
 	go c.attachWriter(resp.Header.Get("Stream-ID"), r)
-	return pipe{resp.Body, w}
+	return &pipe{resp.Body, w}, nil
 }
 func (c *Client) Accept() (io.ReadWriteCloser, error) {
 	resp, err := c.c.Get(c.url)
@@ -57,5 +56,5 @@ func (c *Client) Accept() (io.ReadWriteCloser, error) {
 	}
 	r, w := io.Pipe()
 	go c.attachWriter(resp.Header.Get("Stream-ID"), r)
-	return pipe{resp.Body, w}
+	return &pipe{resp.Body, w}, nil
 }

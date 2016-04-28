@@ -42,5 +42,5 @@ func (p *pipe) Close() error {
 
 type pipeReq struct {
 	id  string
-	res chan net.Conn
+	res chan io.ReadWriteCloser
 }
