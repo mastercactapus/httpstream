@@ -1,4 +1,4 @@
-package httpconn
+package httpstream
 
 import (
 	"errors"
